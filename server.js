@@ -49,3 +49,7 @@ app.get("/api/meeting", async (req, res) => {
 });
 
 app.listen(5000, () => {console.log(`Server is started on 5000 and ${process.env.DYTE_ORG_ID}`)})
+
+
+// Export the Express API
+module.exports = app;
