@@ -51,7 +51,7 @@ app.get("/api/leave-meeting", async (req, res) => {
   const credentials = `${process.env.DYTE_ORG_ID}:${process.env.DYTE_API_KEY}`;
   const encodedApiKey = btoa(credentials);
 
-  if (data.success === true) {
+  if (data) {
     const options = {
       method: "POST",
       headers: {
@@ -64,9 +64,12 @@ app.get("/api/leave-meeting", async (req, res) => {
       `https://api.cluster.dyte.in/v2/meetings/${data.data.id}/active-session/kick-all`,
       options
     )
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch(err => console.error('error:' + err));
+    .then((response) => response.json())
+      .then((response) => {
+        if (response.success === true) {
+          res.json('left meeting');
+        }
+      });
   }
 });
 
