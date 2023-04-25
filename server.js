@@ -1,25 +1,11 @@
 const express = require("express");
-const session = require('express-session');
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
 app.use(cors());
 
-
-
-// let data;
-// let data.data.id;
 const credentials = `${process.env.DYTE_ORG_ID}:${process.env.DYTE_API_KEY}`;
 const encodedApiKey = btoa(credentials);
-
-// set up express-session middleware
-app.use(session(
-  {
-  secret: encodedApiKey ,  // replace with your own secret key
-  resave: true,
-  saveUninitialized: true,
-}
-));
 
 app.get("/api/meeting", async (req, res) => {
   const response = await fetch("https://api.cluster.dyte.in/v2/meetings", {
@@ -35,8 +21,7 @@ app.get("/api/meeting", async (req, res) => {
     }),
   });
   const data = await response.json();
-  req.session.myData = data.data.id;
-  
+
   if (data.success === true) {
     const options = {
       method: "POST",
@@ -58,36 +43,6 @@ app.get("/api/meeting", async (req, res) => {
         }
       });
   }
-});
-
-app.get("/api/leave", async (req, res) => {
-  // if (!data) {
-
-  const myData = req.session.myData;
-  const neededID = JSON.stringify(myData);
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${encodedApiKey}`,
-      }
-    };
-
-
-
-    fetch(
-      `https://api.cluster.dyte.in/v2/meetings/${myData}/active-session/kick-all`,
-      options
-    )
-    .then((response) => response.json())
-      .then((response) => {
-        // if (response.success === true) {
-          // res.json(`${data.data.id}`);
-          res.json(response.success);
-        // }
-      });
-  // }
 });
 
 app.listen(5000, () => {
